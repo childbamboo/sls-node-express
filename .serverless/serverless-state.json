@@ -11,6 +11,30 @@
       "name": "aws",
       "runtime": "nodejs6.10",
       "profile": "childbamboo",
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "dynamodb:Query",
+            "dynamodb:Scan",
+            "dynamodb:GetItem",
+            "dynamodb:PutItem",
+            "dynamodb:UpdateItem",
+            "dynamodb:DeleteItem"
+          ],
+          "Resource": [
+            {
+              "Fn::GetAtt": [
+                "UsersDynamoDBTable",
+                "Arn"
+              ]
+            }
+          ]
+        }
+      ],
+      "environment": {
+        "USERS_TABLE": "users-table-dev"
+      },
       "versionFunctions": true,
       "remoteFunctionData": null,
       "compiledCloudFormationTemplate": {
@@ -81,6 +105,9 @@
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/sls-node-express-dev-app:*:*"
                           }
                         ]
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
                       }
                     ]
                   }
@@ -107,7 +134,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/sls-node-express/dev/1550565609358-2019-02-19T08:40:09.358Z/sls-node-express.zip"
+                "S3Key": "serverless/sls-node-express/dev/1550566438467-2019-02-19T08:53:58.467Z/sls-node-express.zip"
               },
               "FunctionName": "sls-node-express-dev-app",
               "Handler": "index.handler",
@@ -119,21 +146,26 @@
                 ]
               },
               "Runtime": "nodejs6.10",
-              "Timeout": 6
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "USERS_TABLE": "users-table-dev"
+                }
+              }
             },
             "DependsOn": [
               "AppLogGroup",
               "IamRoleLambdaExecution"
             ]
           },
-          "AppLambdaVersiongs04R7VqONVnlwCF51agjeE32IjAsXsgj3CiHHluOs": {
+          "AppLambdaVersion82tL3sLOFrsgMAEQcw6yw8aQpb4ok7yca0Wnck55c": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "CvbeznPM87suiORyagJIKQAwXUgk5CEJxyFL/D4Vhqw="
+              "CodeSha256": "FaFQoRk+r+17Dcdl9W7smE7PIKVkuAJw2bkzujc/9V4="
             }
           },
           "ApiGatewayRestApi": {
@@ -251,7 +283,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1550565609372": {
+          "ApiGatewayDeployment1550566438522": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -310,6 +342,28 @@
                 ]
               }
             }
+          },
+          "UsersDynamoDBTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "userId",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "userId",
+                  "KeyType": "HASH"
+                }
+              ],
+              "ProvisionedThroughput": {
+                "ReadCapacityUnits": 1,
+                "WriteCapacityUnits": 1
+              },
+              "TableName": "users-table-dev"
+            }
           }
         },
         "Outputs": {
@@ -321,7 +375,7 @@
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersiongs04R7VqONVnlwCF51agjeE32IjAsXsgj3CiHHluOs"
+              "Ref": "AppLambdaVersion82tL3sLOFrsgMAEQcw6yw8aQpb4ok7yca0Wnck55c"
             }
           },
           "ServiceEndpoint": {
@@ -363,6 +417,9 @@
       },
       "vpc": {}
     },
+    "custom": {
+      "tableName": "users-table-dev"
+    },
     "pluginsData": {},
     "functions": {
       "app": {
@@ -383,11 +440,38 @@
         "vpc": {}
       }
     },
+    "resources": {
+      "Resources": {
+        "UsersDynamoDBTable": {
+          "Type": "AWS::DynamoDB::Table",
+          "Properties": {
+            "AttributeDefinitions": [
+              {
+                "AttributeName": "userId",
+                "AttributeType": "S"
+              }
+            ],
+            "KeySchema": [
+              {
+                "AttributeName": "userId",
+                "KeyType": "HASH"
+              }
+            ],
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 1,
+              "WriteCapacityUnits": 1
+            },
+            "TableName": "users-table-dev"
+          }
+        }
+      },
+      "Outputs": {}
+    },
     "layers": {},
     "artifact": "/Users/keita/github/sls-node-express/.serverless/sls-node-express.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/sls-node-express/dev/1550565609358-2019-02-19T08:40:09.358Z",
+    "artifactDirectoryName": "serverless/sls-node-express/dev/1550566438467-2019-02-19T08:53:58.467Z",
     "artifact": "sls-node-express.zip"
   }
 }
